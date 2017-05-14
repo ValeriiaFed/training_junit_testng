@@ -12,9 +12,9 @@ import org.testng.annotations.DataProvider;
 public class DataProviders {
 
     @DataProvider
-    public static Iterator<Object[]> loadUserFromFile() throws IOException {
+    public static Iterator<Object[]> loadFileNamesFromFile() throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(
-                DataProviders.class.getResourceAsStream("/user.data")));
+                DataProviders.class.getResourceAsStream("/filename.data")));
 
         List<Object[]> userData = new ArrayList<Object[]>();
         String line = in.readLine();

@@ -9,6 +9,10 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 
 public class Task3Test {
     private Path tempDirectoryPath;
@@ -24,20 +28,20 @@ public class Task3Test {
         }
     }
 
-    @Test(groups = "positive")
-    public void createFileTest() throws IOException {
+    @Test(groups = {"positive"}, dataProvider = "fileNameGenerator")
+    public void createFileTest(String fileName) throws IOException {
         System.out.println("createFileTest positive");
-        filePath = Paths.get(tempDirectoryPath + "/file1.txt");
+        filePath = Paths.get(tempDirectoryPath + "/" + fileName);
         Path createdFile = Files.createFile(filePath);
         Assert.assertEquals(createdFile, filePath);
         File directory = new File(String.valueOf(tempDirectoryPath));
         Assert.assertTrue(directory.listFiles().length == 1);
     }
 
-    @Test(groups = "negative")
-    public void createFileWithExistingNameTest() throws IOException {
+    @Test(groups = {"negative"}, dataProvider = "fileNameGenerator")
+    public void createFileWithExistingNameTest(String fileName) throws IOException {
         System.out.println("createFileWithExistingNameTest negative");
-        filePath = Paths.get(tempDirectoryPath + "/file1.txt");
+        filePath = Paths.get(tempDirectoryPath + "/" + fileName);
         Files.createFile(filePath);
         try{
             Files.createFile(filePath);
@@ -48,11 +52,11 @@ public class Task3Test {
         }
     }
 
-    @Test(groups = "positive")
-    public void createTwoFilesWithDifferentNamesTest() throws IOException {
+    @Test(groups = {"positive"}, dataProviderClass = DataProviders.class, dataProvider = "loadFileNamesFromFile")
+    public void createTwoFilesWithDifferentNamesTest(String fileName1, String fileName2) throws IOException {
         System.out.println("createTwoFilesWithDifferentNamesTest positive");
-        filePath = Paths.get(tempDirectoryPath + "/file1.txt");
-        Path filePath2 = Paths.get(tempDirectoryPath + "/file2.txt");
+        filePath = Paths.get(tempDirectoryPath + "/" + fileName1);
+        Path filePath2 = Paths.get(tempDirectoryPath + "/" + fileName2);
         Files.createFile(filePath);
         Files.createFile(filePath2);
         File directory = new File(String.valueOf(tempDirectoryPath));
@@ -65,6 +69,23 @@ public class Task3Test {
             for (File c : directory.listFiles()){
                 c.delete();
         }
+        directory.delete();
     }
 
+    @DataProvider
+    public Iterator<Object[]> fileNameGenerator() {
+        List<Object[]> data = new ArrayList<Object[]>();
+        for (int i = 0; i < 5; i++) {
+            data.add(new Object[]{
+                    generateRandomFileName()
+            });
+        }
+        return data.iterator();
+    }
+
+    private Object generateRandomFileName(){
+        return "file" + new Random().nextInt() + ".txt";
+    }
 }
+
+
