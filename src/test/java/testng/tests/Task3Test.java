@@ -10,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Task1Test {
+public class Task3Test {
     private Path tempDirectory;
     private Path filePath;
 
@@ -25,13 +25,13 @@ public class Task1Test {
     }
 
     @Test
-    public void test1() throws IOException {
+    public void createFileTest() throws IOException {
         filePath = Paths.get(tempDirectory + "/file1.txt");
         Files.createFile(filePath);
     }
 
     @Test
-    public void test2() throws IOException {
+    public void createFileWithExistingNameTest() throws IOException {
         filePath = Paths.get(tempDirectory + "/file1.txt");
         Files.createFile(filePath);
         try{
@@ -43,7 +43,7 @@ public class Task1Test {
     }
 
     @Test
-    public void test3() throws IOException {
+    public void createTwoFilesWithDifferentNamesTest() throws IOException {
         filePath = Paths.get(tempDirectory + "/file1.txt");
         Path filePath2 = Paths.get(tempDirectory + "/file2.txt");
         Files.createFile(filePath);
