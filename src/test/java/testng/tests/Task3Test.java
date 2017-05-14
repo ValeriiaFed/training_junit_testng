@@ -11,48 +11,57 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Task3Test {
-    private Path tempDirectory;
+    private Path tempDirectoryPath;
     private Path filePath;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void setUp(){
         Path parentDirectoryPath = Paths.get("./temp");
         try {
-            tempDirectory = Files.createTempDirectory(parentDirectoryPath, "prefix");
+            tempDirectoryPath = Files.createTempDirectory(parentDirectoryPath, "prefix");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    @Test
+    @Test(groups = "positive")
     public void createFileTest() throws IOException {
-        filePath = Paths.get(tempDirectory + "/file1.txt");
-        Files.createFile(filePath);
+        System.out.println("createFileTest positive");
+        filePath = Paths.get(tempDirectoryPath + "/file1.txt");
+        Path createdFile = Files.createFile(filePath);
+        Assert.assertEquals(createdFile, filePath);
+        File directory = new File(String.valueOf(tempDirectoryPath));
+        Assert.assertTrue(directory.listFiles().length == 1);
     }
 
-    @Test
+    @Test(groups = "negative")
     public void createFileWithExistingNameTest() throws IOException {
-        filePath = Paths.get(tempDirectory + "/file1.txt");
+        System.out.println("createFileWithExistingNameTest negative");
+        filePath = Paths.get(tempDirectoryPath + "/file1.txt");
         Files.createFile(filePath);
         try{
             Files.createFile(filePath);
             Assert.fail("File with the same name should not be created");
         } catch (FileAlreadyExistsException e){
-
+            File directory = new File(String.valueOf(tempDirectoryPath));
+            Assert.assertTrue(directory.listFiles().length == 1);
         }
     }
 
-    @Test
+    @Test(groups = "positive")
     public void createTwoFilesWithDifferentNamesTest() throws IOException {
-        filePath = Paths.get(tempDirectory + "/file1.txt");
-        Path filePath2 = Paths.get(tempDirectory + "/file2.txt");
+        System.out.println("createTwoFilesWithDifferentNamesTest positive");
+        filePath = Paths.get(tempDirectoryPath + "/file1.txt");
+        Path filePath2 = Paths.get(tempDirectoryPath + "/file2.txt");
         Files.createFile(filePath);
         Files.createFile(filePath2);
+        File directory = new File(String.valueOf(tempDirectoryPath));
+        Assert.assertTrue(directory.listFiles().length == 2);
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void tearDown(){
-        File directory = new File(String.valueOf(tempDirectory));
+        File directory = new File(String.valueOf(tempDirectoryPath));
             for (File c : directory.listFiles()){
                 c.delete();
         }
