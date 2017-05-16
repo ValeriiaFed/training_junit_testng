@@ -1,11 +1,9 @@
 package junit.tests;
 
 import junit.categories.MyCategories;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.experimental.categories.Category;
+import org.junit.rules.ExternalResource;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -24,6 +22,28 @@ import static java.nio.file.Files.createTempDirectory;
 
 @RunWith(Parameterized.class)
 public class ParametrizedTest {
+
+    @Rule
+    public ExternalResource driverRule = new ExternalResource(){
+        @Override
+        protected void before() throws Throwable{
+            Path parentDirectoryPath = Paths.get("./temp");
+            try {
+                tempDirectoryPath = createTempDirectory(parentDirectoryPath, "prefix");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        };
+
+        @Override
+        protected void after(){
+            File directory = new File(String.valueOf(tempDirectoryPath));
+            for (File c : directory.listFiles()){
+                c.delete();
+            }
+            directory.delete();
+        }
+    };
 
     private Path tempDirectoryPath;
     private Path filePath;
@@ -54,16 +74,6 @@ public class ParametrizedTest {
         }
     }
 
-    @Before
-    public void setUp(){
-        Path parentDirectoryPath = Paths.get("./temp");
-        try {
-            tempDirectoryPath = createTempDirectory(parentDirectoryPath, "prefix");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Test
     @Category(MyCategories.PositiveTests.class)
     public void createFileTest() throws IOException {
@@ -74,18 +84,6 @@ public class ParametrizedTest {
         File directory = new File(String.valueOf(tempDirectoryPath));
         Assert.assertTrue(directory.listFiles().length == 1);
     }
-
-
-
-    @After
-    public void tearDown(){
-        File directory = new File(String.valueOf(tempDirectoryPath));
-            for (File c : directory.listFiles()){
-                c.delete();
-        }
-        directory.delete();
-    }
-
 
     private static Object generateRandomFileName(){
         return "file" + new Random().nextInt() + ".txt";
