@@ -23,15 +23,22 @@ public class RunUntilPassRule implements TestRule {
 
         public void evaluate() throws Throwable {
             if (description.getAnnotation(Unstable.class) != null) {
-                for (int i = 0; i < description.getAnnotation(Unstable.class).amountOfTry(); i++){
+                int amountOfTry = description.getAnnotation(Unstable.class).amountOfTry();
+                for (int i = 1; i <=amountOfTry; i++){
+                    if (i == amountOfTry){
+                        System.out.println("Attempt " + amountOfTry);
+                        statement.evaluate();
+                    }
                     try {
                         statement.evaluate();
                         System.out.println("Test passed");
                         break;
                     } catch (Throwable t) {
-                        System.out.println("Attempt is failed");
+                        System.out.println(String.format("Attempt %s is failed", i));
                     }
                 }
+            } else {
+                statement.evaluate();
             }
         }
     }
