@@ -3,7 +3,9 @@ package junit.tests;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
+import junit.annotations.DataSource;
 import junit.categories.MyCategories;
+import junit.dataprovider.UniversalDataProvider;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,14 +13,19 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static java.nio.file.Files.createFile;
 import static java.nio.file.Files.createTempDirectory;
+import static junit.annotations.DataSource.Type.RESOURCE;
 
 @RunWith(DataProviderRunner.class)
 public class DataProviderRunnerTest {
@@ -26,13 +33,6 @@ public class DataProviderRunnerTest {
     private Path tempDirectoryPath;
     private Path filePath;
 
-    @DataProvider
-    public static Object[][] loadFileNamesFromFile(){
-        return new Object[][]{
-                {generateRandomFileName(), generateRandomFileName()},
-                {generateRandomFileName(), generateRandomFileName()}
-        };
-    }
 
     @Before
     public void setUp(){
@@ -45,7 +45,8 @@ public class DataProviderRunnerTest {
     }
 
     @Test
-    @UseDataProvider("loadFileNamesFromFile")
+    @UseDataProvider(value = "fileNamesLoader", location = UniversalDataProvider.class)
+    @DataSource(value = "/filename.data", type = RESOURCE)
     @Category(MyCategories.PositiveTests.class)
     public void createTwoFilesWithDifferentNamesTest(String fileName1, String fileName2) throws IOException {
         System.out.println("createTwoFilesWithDifferentNamesTest positive");

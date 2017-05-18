@@ -19,7 +19,7 @@ import static java.nio.file.Files.createFile;
 public class DirectoryRuleTest extends Fixture {
 
     private Path filePath;
-    
+
     @Test
     @Unstable(amountOfTry = 10)
     public void createFileWithExistingNameTest() throws IOException {
