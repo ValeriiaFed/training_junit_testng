@@ -28,6 +28,7 @@ public class RunUntilPassRule implements TestRule {
                     if (i == amountOfTry){
                         System.out.println("Attempt " + amountOfTry);
                         statement.evaluate();
+                        break;
                     }
                     try {
                         statement.evaluate();
